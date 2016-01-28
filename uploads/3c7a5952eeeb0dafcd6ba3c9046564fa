@@ -1,0 +1,15 @@
+var panImg = new Image();
+panImg.src = "img/mountains.jpg";
+
+// scroll background panoramically
+$(window).scroll(function() {
+	var scrollYMax = Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight) - window.innerHeight;
+	var offset = -( window.scrollY / scrollYMax * (panImg.width * window.innerHeight / panImg.height - window.innerWidth));
+	if(offset > 0){ offset=0 }
+	else if(offset < -(panImg.width * window.innerHeight / panImg.height - window.innerWidth)){
+		offset = -(panImg.width * window.innerHeight / panImg.height - window.innerWidth);
+	}
+	offset = (offset > 0)?(0):(offset);
+	offset = (offset > 0)?(0):(offset);
+	$("#panoramaBackground").css("background-position", offset + "px 0px");
+});

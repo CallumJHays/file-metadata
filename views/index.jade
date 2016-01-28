@@ -1,0 +1,17 @@
+doctype!!!5
+html
+    head
+        title File Metadata
+        link(rel='stylesheet', href='/css/style.css')
+    body
+        header
+            h1 File Metadata
+        .container
+            p Start by choosing a file. Once that is done, hit 'submit' which will post the data to /api/analysefile and output a file size (in bytes) on this page!
+            br
+            form(method="post" action="/api/analysefile" enctype='multipart/form-data' style="position: relative;")
+                input(type="file" name="file")
+                input(type="submit" style="position: absolute; right: 0;")
+            p.success #{fileSizeMsg}
+        footer
+            p Made by Callum J Hays

@@ -1,31 +1,36 @@
 'use strict';
 
-var express = require('express');
-var routes = require('./app/routes/index.js');
-var mongoose = require('mongoose');
-var passport = require('passport');
-var session = require('express-session');
+var express = require('express'),
+	stylus = require('stylus'),
+	nib = require('nib'),
+	multer = require('multer');
+var app = express(),
+    upload = multer({dest: 'uploads/'});
 
-var app = express();
-require('dotenv').load();
-require('./app/config/passport')(passport);
+function compile(str, path) {
+  return stylus(str)
+    .set('filename', path)
+    .use(nib());
+}
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jade');
+app.use(stylus.middleware(
+  { src: __dirname + '/public'
+  , compile: compile
+  }
+));
+app.use(express.static(__dirname + '/public'));
 
-mongoose.connect(process.env.MONGO_URI);
+app.get('/', function(req, res){
+	res.render('index');
+});
 
-app.use('/controllers', express.static(process.cwd() + '/app/controllers'));
-app.use('/public', express.static(process.cwd() + '/public'));
-app.use('/common', express.static(process.cwd() + '/app/common'));
-
-app.use(session({
-	secret: 'secretClementine',
-	resave: false,
-	saveUninitialized: true
-}));
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-routes(app, passport);
+app.post('/api/analysefile', upload.single('file'), function(req, res){
+    if(req.file)
+	    res.render('index', {fileSizeMsg: req.file.originalname + ' contains ' + req.file.size + ' bytes'});
+	else
+	    res.render('index', {fileSizeMsg: 'Please choose a file then press Submit!'});
+});
 
 var port = process.env.PORT || 8080;
 app.listen(port,  function () {
